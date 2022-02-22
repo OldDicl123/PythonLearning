@@ -110,3 +110,4 @@ if __name__ == '__main__':
     # 运行游戏
     PlaneWar().run_game()
     # print('run_game被调用了')
+# 1
