@@ -19,7 +19,7 @@ class Bullet:
         # 设置我方子弹的矩形位置，位于飞机矩形的顶部中心位置
         self.rect.midtop = self.my_plane_rect.midtop
         # 初始化子弹移动的参数
-        self.offset = 50
+        self.offset = 30
 
     def update(self):
         """更新我方子弹位置"""

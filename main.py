@@ -59,19 +59,12 @@ class PlaneWar:
             self._handle_evens()
             # 设置游戏界面的颜色,每次绘制图像的时候清空屏幕
             self.window.fill(pygame.Color('light sky blue'))
-            # 在窗口的指定位置绘制一架我方飞机
-            # self.window.blit(self.my_plane, (299, self.pos_y))
-            self.my_plane.draw()
-            # 在窗口的指定位置绘制列表中所有子弹
-            for bullet in self.bullet_list:
-                bullet.draw()
+            # 绘制飞机和子弹等元素
+            self._draw_elements()
             # 将内存中的窗口对象绘制到屏幕上已更新界面
             pygame.display.flip()
-            # 更新我方飞机位置
-            self.my_plane.update()
-            # 更新列表中所有子弹的位置
-            for bullet in self.bullet_list:
-                bullet.update()
+            # 更新飞机和子弹的位置
+            self._update_positions()
             # i += 1
             # if i == 150:
             #    print(datetime.datetime.now())
@@ -140,6 +133,20 @@ class PlaneWar:
         # 如果松开的键是右箭头或d
         elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
             self.my_plane.is_move_right = False
+
+    def _draw_elements(self):
+        # 在窗口的指定位置绘制一架我方飞机
+        self.my_plane.draw()
+        # 在窗口的指定位置绘制列表中所有子弹
+        for bullet in self.bullet_list:
+            bullet.draw()
+
+    def _update_positions(self):
+        # 更新我方飞机位置
+        self.my_plane.update()
+        # 更新列表中所有子弹的位置
+        for bullet in self.bullet_list:
+            bullet.update()
 
 
 # 只有当直接运行main.py的时候
