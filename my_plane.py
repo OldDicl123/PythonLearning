@@ -1,14 +1,16 @@
 """我方飞机"""
 import pygame
+from pygame.sprite import Sprite
 
 
-class MyPlane:
+class MyPlane(Sprite):
     """我方飞机类"""
 
     def __init__(self, window):
         """初始化我方飞机"""
-        # 获取我方飞机的坐标(坐标位置POS接收一个元组,并赋值给pos_x和pos_y)
-        # self.pos_x, self.pos_y = pos
+
+        # 调用父类Sprite的特殊方法__init__
+        super().__init__()
         # 初始化飞机移动的参数
         self.offset = 10
         # 加载我方飞机图片并赋值给变量

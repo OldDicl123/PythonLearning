@@ -1,13 +1,16 @@
 """我方子弹"""
 import pygame
+from pygame.sprite import Sprite
 
 
-class Bullet:
+class Bullet(Sprite):
     """我方子弹类"""
 
     def __init__(self, window, my_plane):
         """初始化我方子弹"""
 
+        # 调用父类Sprite的特殊方法__init__
+        super().__init__()
         # 获取窗口对象
         self.window = window
         # 加载我方子弹图片并赋值给变量

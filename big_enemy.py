@@ -4,7 +4,7 @@ import random
 from pygame.sprite import Sprite
 
 
-class SmallEnemy(Sprite):
+class BigEnemy(Sprite):
     """敌方类"""
 
     def __init__(self, window):
@@ -15,7 +15,7 @@ class SmallEnemy(Sprite):
         # 获取窗口对象
         self.window = window
         # 加载敌方飞机图片并赋值给变量
-        self.image = pygame.image.load('images/small_enemy.png')
+        self.image = pygame.image.load('images/big_enemy.png')
         # 获取敌方飞机的矩形
         self.rect = self.image.get_rect()
         # 获取窗口的矩形
@@ -24,7 +24,7 @@ class SmallEnemy(Sprite):
         self.rect.bottom = self.window_rect.top
         self.rect.left = random.randint(0, self.window_rect.width - self.rect.width)
         # 初始化飞机移动的参数
-        self.offset = 3
+        self.offset = 1
 
     def update(self):
         """更新敌方飞机位置"""

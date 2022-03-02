@@ -6,6 +6,8 @@ from my_plane import MyPlane
 from bullet import Bullet
 from small_enemy import SmallEnemy
 from mid_enemy import MidEnemy
+from big_enemy import BigEnemy
+from pygame.sprite import Group
 import constants
 
 # import datetime
@@ -33,7 +35,7 @@ class PlaneWar:
         # 创建我方飞机的实例对象
         self.my_plane = MyPlane(self.window)
         # 创建存储元素所使用列表
-        self._create_lists()
+        self._create_groups()
 
     def get_screen_size(self):
         """获取屏幕尺寸"""
@@ -53,15 +55,17 @@ class PlaneWar:
         # 调用窗口图标变量
         pygame.display.set_icon(window_icon)
 
-    def _create_lists(self):
-        """创建所有元素存储的列表"""
+    def _create_groups(self):
+        """创建所有元素存储的分组"""
 
-        # 创建一个用于存储所有子弹的列表
-        self.bullet_list = []
-        # 创建一个用于存储所有小型敌方飞机的列表
-        self.small_enemy_list = []
-        # 创建一个用于存储所有中型敌方飞机的列表
-        self.mid_enemy_list = []
+        # 创建一个用于存储所有子弹的分组
+        self.bullet_group = Group()
+        # 创建一个用于存储所有小型敌方飞机的分组
+        self.small_enemy_group = Group()
+        # 创建一个用于存储所有中型敌方飞机的分组
+        self.mid_enemy_group = Group()
+        # 创建一个用于存储所有大型敌方飞机的分组
+        self.big_enemy_group = Group()
 
     def _set_custom_events_timer(self):
         """设置自定义事件定时器"""
@@ -71,7 +75,9 @@ class PlaneWar:
         # 在事件队列中每隔一段时间就生成一个自定义事件'创建小型敌机'
         pygame.time.set_timer(constants.ID_OF_CREATE_SMALL_ENEMY, constants.INTERVAL_OF_CREATE_SMALL_ENEMY)
         # 在事件队列中每隔一段时间就生成一个自定义事件'创建中型敌机'
-        pygame.time.set_timer(constants.ID_OF_CREATE_MID_ENEMY,constants.INTERVAL_OF_CREATE_MID_ENEMY)
+        pygame.time.set_timer(constants.ID_OF_CREATE_MID_ENEMY, constants.INTERVAL_OF_CREATE_MID_ENEMY)
+        # 在事件队列中每隔一段时间就生成一个自定义事件'创建大型敌机'
+        pygame.time.set_timer(constants.ID_OF_CREATE_BIG_ENEMY, constants.INTERVAL_OF_CREATE_BIG_ENEMY)
 
     def run_game(self):
         """运行游戏"""
@@ -90,9 +96,6 @@ class PlaneWar:
             self._update_positions()
             # 删除所有不可见的元素
             self._delete_invisible_elements()
-            # i += 1
-            # if i == 150:
-            #    print(datetime.datetime.now())
             # 设置while循环体再一秒内执行的最大次数(设置动画效果的最大帧率)
             self.clock.tick(constants.MAX_FRAMERATE)
 
@@ -119,18 +122,26 @@ class PlaneWar:
             # 如果某个事件是用户自定义事件
             elif event.type == constants.ID_OF_CREATE_BULLET:
                 # 生成子弹
-                bullets = Bullet(self.window, self.my_plane)
-                self.bullet_list.append(bullets)
+                bullet = Bullet(self.window, self.my_plane)
+                self.bullet_group.add(bullet)
             # 如果某个事件是用户自定义事件1
             elif event.type == constants.ID_OF_CREATE_SMALL_ENEMY:
                 # 生成小型飞机
                 small_enemy = SmallEnemy(self.window)
-                self.small_enemy_list.append(small_enemy)
+                # 添加到分组
+                self.small_enemy_group.add(small_enemy)
             # 如果某个事件是用户自定义事件2
             elif event.type == constants.ID_OF_CREATE_MID_ENEMY:
                 # 生成中型飞机
                 mid_enemy = MidEnemy(self.window)
-                self.mid_enemy_list.append(mid_enemy)
+                # 添加到分组
+                self.mid_enemy_group.add(mid_enemy)
+            # 如果某个事件是用户自定义事件3
+            elif event.type == constants.ID_OF_CREATE_BIG_ENEMY:
+                # 生成大型飞机
+                big_enemy = BigEnemy(self.window)
+                # 添加到分组
+                self.big_enemy_group.add(big_enemy)
 
     def _handle_keydown_events(self, event):
         """处理键盘按下的事件"""
@@ -157,12 +168,6 @@ class PlaneWar:
             pygame.quit()
             # 退出程序
             sys.exit()
-        """
-        elif event.key == pygame.K_SPACE:
-            # 生成子弹
-            bullets = Bullet(self.window, self.my_plane)
-            self.bullet_list.append(bullets)
-        """
 
     def _handel_keyup_events(self, event):
         """处理键盘松开的事件"""
@@ -185,15 +190,14 @@ class PlaneWar:
 
         # 在窗口的指定位置绘制一架我方飞机
         self.my_plane.draw()
-        # 在窗口的指定位置绘制列表中所有子弹
-        for bullet in self.bullet_list:
-            bullet.draw()
+        # 在窗口的指定位置绘制分组中所有子弹
+        self.bullet_group.draw(self.window)
         # 在窗口的指定位置绘制列表中所有小型敌机
-        for small_enemy in self.small_enemy_list:
-            small_enemy.draw()
+        self.small_enemy_group.draw(self.window)
         # 在窗口的指定位置绘制列表中的所有中型敌机
-        for mid_enemy in self.mid_enemy_list:
-            mid_enemy.draw()
+        self.mid_enemy_group.draw(self.window)
+        # 在窗口的指定位置绘制列表中的所有大型敌机
+        self.big_enemy_group.draw(self.window)
 
     def _update_positions(self):
         """更新所有元素的位置"""
@@ -201,14 +205,17 @@ class PlaneWar:
         # 更新我方飞机位置
         self.my_plane.update()
         # 更新列表中所有子弹的位置
-        for bullet in self.bullet_list:
+        for bullet in self.bullet_group.sprites():
             bullet.update()
         # 更新列表中所有小型敌方飞机的位置
-        for small_enemy in self.small_enemy_list:
+        for small_enemy in self.small_enemy_group.sprites():
             small_enemy.update()
         # 更新列表中所有中型敌方飞机的位置
-        for mid_enemy in self.mid_enemy_list:
+        for mid_enemy in self.mid_enemy_group.sprites():
             mid_enemy.update()
+        # 更新列表中所有大型敌方飞机的位置
+        for big_enemy in self.big_enemy_group.sprites():
+            big_enemy.update()
 
     def _delete_invisible_elements(self):
         """删除所有不可见的元素"""
@@ -219,36 +226,48 @@ class PlaneWar:
         self._delete_invisible_small_enemy()
         # 删除窗口中不可见的中型敌方飞机
         self._delete_invisible_mid_enemy()
+        # 删除窗口中不可见的大型敌方飞机
+        self._delete_invisible_big_enemy()
 
     def _delete_invisible_bullets(self):
         """删除窗口中所有不可见的子弹"""
 
-        # 遍历子弹列表
-        for bullet in self.bullet_list:
+        # 遍历子弹分组
+        for bullet in self.bullet_group.sprites():
             # 如果某颗子弹从窗口中不可见
             if bullet.rect.bottom <= 0:
                 # 删除该子弹
-                self.bullet_list.remove(bullet)
+                self.bullet_group.remove(bullet)
 
     def _delete_invisible_small_enemy(self):
         """删除窗口中所有不可见的小型敌机"""
 
         # 遍历敌机列表
-        for enemy in self.small_enemy_list:
+        for enemy in self.small_enemy_group.sprites():
             # 如果某架敌机在窗口中不可见
             if enemy.rect.top >= self.window.get_rect().height:
                 # 删除
-                self.small_enemy_list.remove(enemy)
+                self.small_enemy_group.remove(enemy)
 
     def _delete_invisible_mid_enemy(self):
-        """删除窗口中所有不可见的小型敌机"""
+        """删除窗口中所有不可见的中型敌机"""
 
         # 遍历敌机列表
-        for enemy in self.mid_enemy_list:
+        for enemy in self.mid_enemy_group.sprites():
             # 如果某架敌机在窗口中不可见
             if enemy.rect.top >= self.window.get_rect().height:
                 # 删除
-                self.mid_enemy_list.remove(enemy)
+                self.mid_enemy_group.remove(enemy)
+
+    def _delete_invisible_big_enemy(self):
+        """删除窗口中所有不可见的大型敌机"""
+
+        # 遍历敌机列表
+        for enemy in self.big_enemy_group.sprites():
+            # 如果某架敌机在窗口中不可见
+            if enemy.rect.top >= self.window.get_rect().height:
+                # 删除
+                self.big_enemy_group.remove(enemy)
 
 
 # 只有当直接运行main.py的时候
