@@ -1,7 +1,7 @@
 """我方飞机"""
 import pygame
 from pygame.sprite import Sprite
-
+import constants
 
 class MyPlane(Sprite):
     """我方飞机类"""
@@ -13,8 +13,14 @@ class MyPlane(Sprite):
         super().__init__()
         # 初始化飞机移动的参数
         self.offset = 10
-        # 加载我方飞机图片并赋值给变量
-        self.image = pygame.image.load('images/PlaneB.jpg')
+        # 图片切换的计数器
+        self.switch_counter = 0
+        # 加载我方飞机第一张图片并赋值给变量
+        self.image1 = pygame.image.load('images/my_plane1.png')
+        # 我方飞机的图片是第一张图片
+        self.image = self.image1
+        # 加载我方飞机第二张图片并赋值给变量
+        self.image2 = pygame.image.load('images/my_plane2.png')
         # 获取窗口对象
         self.window = window
         # 获取我方飞机的矩形
@@ -53,6 +59,20 @@ class MyPlane(Sprite):
         # 在窗口的指定位置绘制一架飞机
         self.window.blit(self.image, self.rect)
 
+    def switch_image(self):
+        """切换我方飞机图片"""
 
+        # 切换我方飞机图片的计数器+1
+        self.switch_counter += 1
+        # 如果是第一张图片
+        if self.switch_counter == constants.MY_PLANE_SWITCH_TIME_FREQUENCY:
+            if self.image == self.image1:
+                # 切换到第二张图片
+                self.image = self.image2
+                # 如果是第二张图片
+            elif self.image == self.image2:
+                # 切换到第一张图片
+                self.image = self.image1
+            self.switch_counter = 0
 
 

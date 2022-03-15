@@ -2,6 +2,7 @@
 import pygame
 import random
 from pygame.sprite import Sprite
+import constants
 
 
 class SmallEnemy(Sprite):
@@ -35,3 +36,13 @@ class SmallEnemy(Sprite):
         """绘制敌方飞机"""
         # 在窗口的指定位置绘制一架敌方飞机
         self.window.blit(self.image, self.rect)
+
+    def play_explode_sound(self):
+        """播放小型敌机的爆炸声音"""
+
+        # 加载小型敌机的爆炸声音
+        explode_sound = pygame.mixer.Sound('sounds/small_enemy_explode.wav')
+        # 设置音量
+        explode_sound.set_volume(constants.SMALL_ENEMY_EXPLODE_SOUND)
+        # 播放声音
+        explode_sound.play()
