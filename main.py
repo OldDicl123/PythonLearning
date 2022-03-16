@@ -199,8 +199,10 @@ class PlaneWar:
 
         # 子弹和小型飞机的碰撞检测
         self._check_collision_bullets_small()
+        # 子弹和大型飞机的碰撞检测
+        self._check_collision_bullets_mid_or_big(self.big_enemy_group)
         # 子弹和中型飞机的碰撞检测
-        self._check_collision_bullets_mid()
+        self._check_collision_bullets_mid_or_big(self.mid_enemy_group)
 
     def _check_collision_bullets_small(self):
         # 子弹和小型敌机碰撞
@@ -221,27 +223,35 @@ class PlaneWar:
             if small_enemy.is_switching_explode_image:
                 small_enemy.switch_explode_image()
 
-    def _check_collision_bullets_mid(self):
-        # 子弹和中型敌机碰撞
+    def _check_collision_bullets_mid_or_big(self, enemy_group):
+        # 子弹和中型or大型敌机碰撞
 
         # 碰撞检测，并将返回值赋值给变量
-        dict_collided = pygame.sprite.groupcollide(self.mid_enemy_group, self.bullet_group, False, True)
+        dict_collided = pygame.sprite.groupcollide(enemy_group, self.bullet_group, False, True)
         if len(dict_collided) > 0:
-            # 遍历所有发生碰撞的中型敌机
-            for mid_enemy in dict_collided.keys():
-                if mid_enemy.energy > 0:
-                    mid_enemy.energy -= 1
-                if mid_enemy.energy == 0:
-                    # 如果某架中型敌机被标记为没有在切换图片
-                    if not mid_enemy.is_switching_explode_image:
-                        # 播放中型敌机爆炸的声音
-                        mid_enemy.play_explode_sound()
-                        # 标记中型敌机正在切换图片
-                        mid_enemy.is_switching_explode_image = True
-        # 遍历小型敌机分组中的所有敌机
-        for mid_enemy in self.mid_enemy_group.sprites():
-            if mid_enemy.is_switching_explode_image:
-                mid_enemy.switch_explode_image()
+            # 遍历所有发生碰撞的中型或大型敌机
+            for enemy in dict_collided.keys():
+                if enemy.energy > 0:
+                    enemy.energy -= 1
+                if enemy.energy == 0:
+                    # 如果某架中型或大型敌机被标记为没有在切换图片
+                    if not enemy.is_switching_explode_image:
+                        # 播放中型或大型敌机爆炸的声音
+                        enemy.play_explode_sound()
+                        # 标记中型或大型敌机正在切换图片
+                        enemy.is_switching_explode_image = True
+                else:
+                    # 如果某架中型或大型敌机被击中的特效图片被标记为没有在切换图片
+                    if not enemy.is_switching_hit_image:
+                        # 标记中型或大型敌机被击中的特效图片正在切换图片
+                        enemy.is_switching_hit_image = True
+
+        # 遍历中型或大型敌机分组中的所有敌机
+        for enemy in enemy_group.sprites():
+            if enemy.is_switching_hit_image:
+                enemy.switch_hit_image()
+            if enemy.is_switching_explode_image:
+                enemy.switch_explode_image()
 
     def _draw_elements(self):
         """绘制所有元素"""
@@ -257,6 +267,9 @@ class PlaneWar:
         # 在窗口的指定位置绘制列表中的所有中型敌机的血条
         for mid_enemy in self.mid_enemy_group.sprites():
             mid_enemy.draw_energy_lines()
+        # 在窗口的指定位置绘制列表中的所有大型敌机的血条
+        for big_enemy in self.big_enemy_group.sprites():
+            big_enemy.draw_energy_lines()
         # 在窗口的指定位置绘制列表中的所有大型敌机
         self.big_enemy_group.draw(self.window)
 

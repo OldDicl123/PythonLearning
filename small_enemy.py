@@ -17,16 +17,8 @@ class SmallEnemy(Sprite):
         self.window = window
         # 生成一个切换图片的计数器
         self.switch_explode_counter = 0
-        # 加载敌方飞机图片并赋值给变量
-        self.image = self.small_image = pygame.image.load('images/small_enemy.png')
-        # 加载敌方飞机爆炸的图片1并赋值给变量
-        self.image1 = pygame.image.load('images/small_enemy_explode1.png')
-        # 加载敌方飞机爆炸的图片2并赋值给变量
-        self.image2 = pygame.image.load('images/small_enemy_explode2.png')
-        # 加载敌方飞机爆炸的图片3并赋值给变量
-        self.image3 = pygame.image.load('images/small_enemy_explode3.png')
-        # 加载敌方飞机爆炸的图片4并赋值给变量
-        self.image4 = pygame.image.load('images/small_enemy_explode4.png')
+        # 加载飞机图片
+        self._load_images()
         # 获取敌方飞机的矩形
         self.rect = self.image.get_rect()
         # 获取窗口的矩形
@@ -38,6 +30,19 @@ class SmallEnemy(Sprite):
         self.offset = 3
         # 标记是否在切换图片
         self.is_switching_explode_image = False
+
+    def _load_images(self):
+        """加载飞机图片"""
+        # 加载敌方飞机图片并赋值给变量
+        self.image = self.small_image = pygame.image.load('images/small_enemy.png')
+        # 加载敌方飞机爆炸的图片1并赋值给变量
+        self.image1 = pygame.image.load('images/small_enemy_explode1.png')
+        # 加载敌方飞机爆炸的图片2并赋值给变量
+        self.image2 = pygame.image.load('images/small_enemy_explode2.png')
+        # 加载敌方飞机爆炸的图片3并赋值给变量
+        self.image3 = pygame.image.load('images/small_enemy_explode3.png')
+        # 加载敌方飞机爆炸的图片4并赋值给变量
+        self.image4 = pygame.image.load('images/small_enemy_explode4.png')
 
     def update(self):
         """更新敌方飞机位置"""

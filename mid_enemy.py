@@ -17,16 +17,10 @@ class MidEnemy(Sprite):
         self.window = window
         # 生成一个切换图片的计数器
         self.switch_explode_counter = 0
-        # 加载敌方飞机图片并赋值给变量
-        self.image = self.mid_image = pygame.image.load('images/mid_enemy.png')
-        # 加载敌方飞机图片并赋值给变量
-        self.image1 = pygame.image.load('images/mid_enemy_explode1.png')
-        # 加载敌方飞机图片并赋值给变量
-        self.image2 = pygame.image.load('images/mid_enemy_explode2.png')
-        # 加载敌方飞机图片并赋值给变量
-        self.image3 = pygame.image.load('images/mid_enemy_explode3.png')
-        # 加载敌方飞机图片并赋值给变量
-        self.image4 = pygame.image.load('images/mid_enemy_explode4.png')
+        # 生成一个切换击中特性图片的计数器
+        self.switch_hit_counter = 0
+        # 加载飞机图片
+        self._load_images()
         # 获取敌方飞机的矩形
         self.rect = self.image.get_rect()
         # 获取窗口的矩形
@@ -38,8 +32,25 @@ class MidEnemy(Sprite):
         self.offset = 2
         # 标记是否在切换图片
         self.is_switching_explode_image = False
+        # 标记是否在切换击中特效图片
+        self.is_switching_hit_image = False
         # 中型飞机的能量条变量
         self.energy = constants.MID_ENEMY_INITIAL_ENERGY
+
+    def _load_images(self):
+        """加载飞机图片"""
+        # 加载敌方飞机图片并赋值给变量
+        self.image = self.mid_image = pygame.image.load('images/mid_enemy.png')
+        # 加载敌方飞机图片并赋值给变量
+        self.image1 = pygame.image.load('images/mid_enemy_explode1.png')
+        # 加载敌方飞机图片并赋值给变量
+        self.image2 = pygame.image.load('images/mid_enemy_explode2.png')
+        # 加载敌方飞机图片并赋值给变量
+        self.image3 = pygame.image.load('images/mid_enemy_explode3.png')
+        # 加载敌方飞机图片并赋值给变量
+        self.image4 = pygame.image.load('images/mid_enemy_explode4.png')
+        # 加载敌方飞机图片并赋值给变量
+        self.hit_image = pygame.image.load('images/mid_enemy_hit.png')
 
     def update(self):
         """更新敌方飞机位置"""
@@ -77,7 +88,7 @@ class MidEnemy(Sprite):
     def switch_explode_image(self):
         """切换我方飞机图片"""
 
-        # 切换我方飞机图片的计数器+1
+        # 切换中型飞机图片的计数器+1
         self.switch_explode_counter += 1
         # 定义爆炸图片切换频率
         if self.switch_explode_counter == constants.MID_ENEMY_SWITCH_EXPLODE_IMAGE_FREQUENCY:
@@ -102,3 +113,17 @@ class MidEnemy(Sprite):
             # 重置计数器
             self.switch_explode_counter = 0
 
+    def switch_hit_image(self):
+        """切换中型飞机被击中的图片"""
+        # 切换中型飞机特效图片的计数器+1
+        self.switch_hit_counter += 1
+        # 定义爆炸图片切换频率
+        if self.switch_hit_counter == constants.MID_ENEMY_SWITCH_EXPLODE_IMAGE_FREQUENCY:
+            if self.image == self.mid_image:
+                self.image = self.hit_image
+            elif self.image == self.hit_image:
+                self.image = self.mid_image
+                # 标记中型敌机没有在切换被击中的图片
+                self.is_switching_hit_image = False
+            # 重置计数器
+            self.switch_hit_counter = 0
