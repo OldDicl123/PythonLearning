@@ -90,8 +90,8 @@ class PlaneWar:
             self._handle_evens()
             # 设置游戏界面的颜色,每次绘制图像的时候清空屏幕
             self.window.fill(pygame.Color('light sky blue'))
-            # 子弹和小型飞机的碰撞检测
-            self._check_collision_bullets_small()
+            # 检测碰撞
+            self._check_collisions()
             # 绘制飞机和子弹等元素
             self._draw_elements()
             # 将内存中的窗口对象绘制到屏幕上已更新界面
@@ -194,6 +194,14 @@ class PlaneWar:
         elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
             self.my_plane.is_move_right = False
 
+    def _check_collisions(self):
+        # 检测碰撞
+
+        # 子弹和小型飞机的碰撞检测
+        self._check_collision_bullets_small()
+        # 子弹和中型飞机的碰撞检测
+        self._check_collision_bullets_mid()
+
     def _check_collision_bullets_small(self):
         # 子弹和小型敌机碰撞
 
@@ -202,8 +210,38 @@ class PlaneWar:
         if len(dict_collided) > 0:
             # 遍历所有发生碰撞的小型敌机
             for small_enemy in dict_collided.keys():
-                # 播放小型敌机爆炸的声音
-                small_enemy.play_explode_sound()
+                # 如果某架小型敌机被标记为没有在切换图片
+                if not small_enemy.is_switching_explode_image:
+                    # 播放小型敌机爆炸的声音
+                    small_enemy.play_explode_sound()
+                    # 标记小型敌机正在切换图片
+                    small_enemy.is_switching_explode_image = True
+        # 遍历小型敌机分组中的所有敌机
+        for small_enemy in self.small_enemy_group.sprites():
+            if small_enemy.is_switching_explode_image:
+                small_enemy.switch_explode_image()
+
+    def _check_collision_bullets_mid(self):
+        # 子弹和中型敌机碰撞
+
+        # 碰撞检测，并将返回值赋值给变量
+        dict_collided = pygame.sprite.groupcollide(self.mid_enemy_group, self.bullet_group, False, True)
+        if len(dict_collided) > 0:
+            # 遍历所有发生碰撞的中型敌机
+            for mid_enemy in dict_collided.keys():
+                if mid_enemy.energy > 0:
+                    mid_enemy.energy -= 1
+                if mid_enemy.energy == 0:
+                    # 如果某架中型敌机被标记为没有在切换图片
+                    if not mid_enemy.is_switching_explode_image:
+                        # 播放中型敌机爆炸的声音
+                        mid_enemy.play_explode_sound()
+                        # 标记中型敌机正在切换图片
+                        mid_enemy.is_switching_explode_image = True
+        # 遍历小型敌机分组中的所有敌机
+        for mid_enemy in self.mid_enemy_group.sprites():
+            if mid_enemy.is_switching_explode_image:
+                mid_enemy.switch_explode_image()
 
     def _draw_elements(self):
         """绘制所有元素"""
@@ -216,6 +254,9 @@ class PlaneWar:
         self.small_enemy_group.draw(self.window)
         # 在窗口的指定位置绘制列表中的所有中型敌机
         self.mid_enemy_group.draw(self.window)
+        # 在窗口的指定位置绘制列表中的所有中型敌机的血条
+        for mid_enemy in self.mid_enemy_group.sprites():
+            mid_enemy.draw_energy_lines()
         # 在窗口的指定位置绘制列表中的所有大型敌机
         self.big_enemy_group.draw(self.window)
 

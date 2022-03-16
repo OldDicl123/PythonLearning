@@ -3,6 +3,7 @@ import pygame
 from pygame.sprite import Sprite
 import constants
 
+
 class MyPlane(Sprite):
     """我方飞机类"""
 
