@@ -36,6 +36,8 @@ class PlaneWar:
         self.my_plane = MyPlane(self.window)
         # 创建存储元素所使用列表
         self._create_groups()
+        # 创建游戏是否结束的标识
+        self.is_gameover = False
 
     def get_screen_size(self):
         """获取屏幕尺寸"""
@@ -81,6 +83,18 @@ class PlaneWar:
         # 在事件队列中每隔一段时间就生成一个自定义事件'创建大型敌机'
         pygame.time.set_timer(constants.ID_OF_CREATE_BIG_ENEMY, constants.INTERVAL_OF_CREATE_BIG_ENEMY)
 
+    def _stop_custom_events_timer(self):
+        """停止自定义事件定时器"""
+
+        # 停止自定义事件'创建子弹'
+        pygame.time.set_timer(constants.ID_OF_CREATE_BULLET, 0)
+        # 停止自定义事件'创建小型敌机'
+        pygame.time.set_timer(constants.ID_OF_CREATE_SMALL_ENEMY, 0)
+        # 停止自定义事件'创建中型敌机'
+        pygame.time.set_timer(constants.ID_OF_CREATE_MID_ENEMY, 0)
+        # 停止自定义事件'创建大型敌机'
+        pygame.time.set_timer(constants.ID_OF_CREATE_BIG_ENEMY, 0)
+
     def run_game(self):
         """运行游戏"""
 
@@ -90,18 +104,20 @@ class PlaneWar:
             self._handle_evens()
             # 设置游戏界面的颜色,每次绘制图像的时候清空屏幕
             self.window.fill(pygame.Color('light sky blue'))
-            # 检测碰撞
-            self._check_collisions()
+            if not self.is_gameover:
+                # 检测碰撞
+                self._check_collisions()
             # 绘制飞机和子弹等元素
             self._draw_elements()
             # 将内存中的窗口对象绘制到屏幕上已更新界面
             pygame.display.flip()
-            # 更新飞机和子弹的位置
-            self._update_positions()
-            # 删除所有不可见的元素
-            self._delete_invisible_elements()
-            # 切换我方飞机图片
-            self.my_plane.switch_image()
+            if not self.is_gameover:
+                # 更新飞机和子弹的位置
+                self._update_positions()
+                # 删除所有不可见的元素
+                self._delete_invisible_elements()
+                # 切换飞机飞行效果图片
+                self.switch_enemy_fly_image()
             # 设置while循环体再一秒内执行的最大次数(设置动画效果的最大帧率)
             self.clock.tick(constants.MAX_FRAMERATE)
 
@@ -203,6 +219,8 @@ class PlaneWar:
         self._check_collision_bullets_mid_or_big(self.big_enemy_group)
         # 子弹和中型飞机的碰撞检测
         self._check_collision_bullets_mid_or_big(self.mid_enemy_group)
+        # 检测我方飞机和敌机的碰
+        self._check_collision_myplane_enemies()
 
     def _check_collision_bullets_small(self):
         # 子弹和小型敌机碰撞
@@ -250,6 +268,48 @@ class PlaneWar:
         for enemy in enemy_group.sprites():
             if enemy.is_switching_hit_image:
                 enemy.switch_hit_image()
+            if enemy.is_switching_explode_image:
+                enemy.switch_explode_image()
+
+    def switch_enemy_fly_image(self):
+        """切换飞行效果的图片"""
+
+        # 切换我方飞机图片
+        self.my_plane.switch_image()
+        # 切换敌方大型飞机效果图片
+        for big_enemy in self.big_enemy_group.sprites():
+            big_enemy.switch_fly_image()
+
+    def _check_collision_myplane_enemies(self):
+        """检测我方飞机和敌机的碰撞"""
+
+        # 检测所有敌机分组中的元素是否与我方飞机发生碰撞
+        list_collided = pygame.sprite.spritecollide(self.my_plane, self.enemy_group, False,
+                                                    pygame.sprite.collide_mask)
+        if len(list_collided) > 0:
+            # 我方飞机的生命值减1
+            self.my_plane.life_number -= 1
+            # 判断生命值数值
+            if self.my_plane.life_number > 0:
+                # 重置位置
+                self.my_plane.reset_position()
+            else:
+                # 结束游戏
+                self.is_gameover = True
+                # 停止计数器
+                self._stop_custom_events_timer()
+
+            # 遍历所有与我方飞机发生碰撞的敌机
+            for enemy in list_collided:
+                # 如果某架敌机被标记为没有在切换图片
+                if not enemy.is_switching_explode_image:
+                    # 播放敌机爆炸的声音
+                    enemy.play_explode_sound()
+                    # 标记敌机正在切换图片
+                    enemy.is_switching_explode_image = True
+
+        # 遍历敌机分组中的所有敌机
+        for enemy in self.enemy_group.sprites():
             if enemy.is_switching_explode_image:
                 enemy.switch_explode_image()
 

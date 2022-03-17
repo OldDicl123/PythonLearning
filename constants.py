@@ -59,7 +59,10 @@ BIG_ENEMY_SWITCH_EXPLODE_IMAGE_FREQUENCY = 6
 # 大型敌机的初始能量
 BIG_ENEMY_INITIAL_ENERGY = 6
 
-# 大型敌机击中特性的图片切换频率
+# 大型敌机击中效果的图片切换频率
 BIG_PLANE_SWITCH_HIT_IMAGE_FREQUENCY = 3
+
+# 大型敌机飞行效果图片切换频率
+BIG_ENEMY_SWITCH_TIME_FREQUENCY = 3
 
 

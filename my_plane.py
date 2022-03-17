@@ -30,6 +30,8 @@ class MyPlane(Sprite):
         self.window_rect = self.window.get_rect()
         # 设置我方飞机的矩形位置，位于窗口矩形的中心位置
         self.rect.midbottom = self.window_rect.midbottom
+        # 设置我方飞机的生命值
+        self.life_number = 3
         # 设置我方飞机行为状态
         self.is_move_up = False
         self.is_move_down = False
@@ -76,4 +78,6 @@ class MyPlane(Sprite):
                 self.image = self.image1
             self.switch_counter = 0
 
-
+    def reset_position(self):
+        """重置我方飞机的位置"""
+        self.rect.midbottom = self.window_rect.midbottom
