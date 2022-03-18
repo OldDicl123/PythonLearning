@@ -36,6 +36,10 @@ class PlaneWar:
         self.my_plane = MyPlane(self.window)
         # 创建存储元素所使用列表
         self._create_groups()
+        # 获取字体的font,设置字体大小，并绑定到实例属性
+        self.font_36 = pygame.font.Font('fonts/wawa.ttf', constants.FONT_SIZE_36)
+        # 获取字体的矩形
+
         # 创建游戏是否结束的标识
         self.is_gameover = False
 
@@ -167,6 +171,12 @@ class PlaneWar:
                 # 添加到分组
                 self.big_enemy_group.add(big_enemy)
                 self.enemy_group.add(big_enemy)
+                # 如果某个事件是用户自定义事件4
+            elif event.type == constants.ID_OF_CANCEL_INVINCIBLE:
+                # 将我方飞机标记为没有处于无敌状态
+                self.my_plane.is_invincible = False
+                # 停止生成自定义事件
+                pygame.time.set_timer(constants.ID_OF_CANCEL_INVINCIBLE, 0)
 
     def _handle_keydown_events(self, event):
         """处理键盘按下的事件"""
@@ -287,17 +297,22 @@ class PlaneWar:
         list_collided = pygame.sprite.spritecollide(self.my_plane, self.enemy_group, False,
                                                     pygame.sprite.collide_mask)
         if len(list_collided) > 0:
-            # 我方飞机的生命值减1
-            self.my_plane.life_number -= 1
-            # 判断生命值数值
-            if self.my_plane.life_number > 0:
-                # 重置位置
-                self.my_plane.reset_position()
-            else:
-                # 结束游戏
-                self.is_gameover = True
-                # 停止计数器
-                self._stop_custom_events_timer()
+            if not self.my_plane.is_invincible:
+                # 我方飞机的生命值减1
+                self.my_plane.life_number -= 1
+                # 判断生命值数值
+                if self.my_plane.life_number > 0:
+                    # 重置位置
+                    self.my_plane.reset_position()
+                    # 标记我方飞机为无敌
+                    self.my_plane.is_invincible = True
+                    # 判断碰撞后，每隔一段时间，生成一个自定义事件
+                    pygame.time.set_timer(constants.ID_OF_CANCEL_INVINCIBLE, constants.INTERVAL_OF_CANCEL_INVINCIBLE)
+                else:
+                    # 结束游戏
+                    self.is_gameover = True
+                    # 停止计数器
+                    self._stop_custom_events_timer()
 
             # 遍历所有与我方飞机发生碰撞的敌机
             for enemy in list_collided:
@@ -318,6 +333,10 @@ class PlaneWar:
 
         # 在窗口的指定位置绘制一架我方飞机
         self.my_plane.draw()
+        # 在窗口的指定位置绘制我方飞机生命值图片
+        for i in range(self.my_plane.life_number):
+            # 绘制图片
+            self.window.blit(self.my_plane.life_image, self.my_plane.life_rect_list[i])
         # 在窗口的指定位置绘制分组中所有子弹
         self.bullet_group.draw(self.window)
         # 在窗口的指定位置绘制列表中所有小型敌机
@@ -332,6 +351,22 @@ class PlaneWar:
             big_enemy.draw_energy_lines()
         # 在窗口的指定位置绘制列表中的所有大型敌机
         self.big_enemy_group.draw(self.window)
+        # 绘制无敌时间的提示信息
+        if self.my_plane.is_invincible:
+            self._draw_invincible_prompt_text()
+
+    def _draw_invincible_prompt_text(self):
+        """绘制无敌时间的提示信息"""
+
+        prompt_text = "还有{}条命, 无敌时间将在该文本消失后解除".format(self.my_plane.life_number)
+        # 获取surface对象
+        prompt_text_surface = self.font_36.render(prompt_text, True, constants.WHITE_COLOR)
+        # 获取矩形
+        prompt_text_rect = prompt_text_surface.get_rect()
+        # 定位在中部
+        prompt_text_rect.center = self.window.get_rect().center
+        # 绘制对象
+        self.window.blit(prompt_text_surface, prompt_text_rect)
 
     def _update_positions(self):
         """更新所有元素的位置"""

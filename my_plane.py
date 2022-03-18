@@ -32,6 +32,23 @@ class MyPlane(Sprite):
         self.rect.midbottom = self.window_rect.midbottom
         # 设置我方飞机的生命值
         self.life_number = 3
+        # 获取我方飞机显示生命值次数的小飞机图片
+        self.life_image = pygame.transform.scale(self.image1, (round(self.rect.width / 2), round(self.rect.height / 2)))
+        # 初始化我方飞机生命值列表
+        self.life_rect_list = []
+        # 根据我方飞机的初始生命值，将对应数量的生命图片定位在窗口中
+        for i in range(self.life_number):
+            # 获取我方飞机生命图片矩形
+            life_rect = self.life_image.get_rect()
+            # 获取我方飞机生命图矩形的初始位置
+            life_rect.bottom = self.window_rect.height - constants.MARGIN
+            # 获取我方飞机生命图矩形的初始位置
+            life_rect.right = self.window_rect.width - constants.MARGIN - (life_rect.width + constants.MARGIN) * i
+            # 将我方飞机的生命矩形添加到列表
+            self.life_rect_list.append(life_rect)
+        # 标记我方是否处于无敌状态
+        self.is_invincible = False
+
         # 设置我方飞机行为状态
         self.is_move_up = False
         self.is_move_down = False

@@ -29,6 +29,11 @@ ID_OF_CREATE_BIG_ENEMY = pygame.USEREVENT + 3
 # 自定义事件'创建大型敌机'的时间间隔
 INTERVAL_OF_CREATE_BIG_ENEMY = 18000
 
+# 自定义事件'解除我方飞机的无敌状态'的ID
+ID_OF_CANCEL_INVINCIBLE = pygame.USEREVENT + 4
+# 自定义事件'解除我方飞机的无敌状态'的时间间隔
+INTERVAL_OF_CANCEL_INVINCIBLE = 5000
+
 # 我方飞机图片切换频率
 MY_PLANE_SWITCH_TIME_FREQUENCY = 3
 
@@ -65,4 +70,11 @@ BIG_PLANE_SWITCH_HIT_IMAGE_FREQUENCY = 3
 # 大型敌机飞行效果图片切换频率
 BIG_ENEMY_SWITCH_TIME_FREQUENCY = 3
 
+# 间距
+MARGIN = 10
 
+# 字体大小
+FONT_SIZE_36 = 36
+
+# 白色
+WHITE_COLOR = (255,255,255)
