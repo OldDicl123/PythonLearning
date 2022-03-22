@@ -34,6 +34,12 @@ ID_OF_CANCEL_INVINCIBLE = pygame.USEREVENT + 4
 # 自定义事件'解除我方飞机的无敌状态'的时间间隔
 INTERVAL_OF_CANCEL_INVINCIBLE = 5000
 
+# 自定义事件‘创建子弹补给’的ID
+ID_OF_CREATE_BULLET_SUPPLY = pygame.USEREVENT + 5
+# 自定义事件‘创建字典补给’的时间间隔
+INTERVAL_OF_CREATE_BULLET_SUPPLY = 25000
+
+
 # 我方飞机图片切换频率
 MY_PLANE_SWITCH_TIME_FREQUENCY = 3
 
@@ -76,5 +82,9 @@ MARGIN = 10
 # 字体大小
 FONT_SIZE_36 = 36
 
+# 字体大小
+FONT_SIZE_96 = 96
+
 # 白色
-WHITE_COLOR = (255,255,255)
+WHITE_COLOR = (255, 255, 255)
+

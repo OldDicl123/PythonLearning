@@ -36,10 +36,8 @@ class PlaneWar:
         self.my_plane = MyPlane(self.window)
         # 创建存储元素所使用列表
         self._create_groups()
-        # 获取字体的font,设置字体大小，并绑定到实例属性
-        self.font_36 = pygame.font.Font('fonts/wawa.ttf', constants.FONT_SIZE_36)
-        # 获取字体的矩形
-
+        # 获取字体
+        self._get_fonts()
         # 创建游戏是否结束的标识
         self.is_gameover = False
 
@@ -50,6 +48,14 @@ class PlaneWar:
         screen_width = info.current_w
         screen_height = info.current_h
         return screen_width, screen_height
+
+    def _get_fonts(self):
+        """获取字体以及大小"""
+
+        # 获取字体的font,设置字体大小，并绑定到实例属性
+        self.font_36 = pygame.font.Font('fonts/wawa.ttf', constants.FONT_SIZE_36)
+        # 获取字体的font,设置字体大小，并绑定到实例属性
+        self.font_96 = pygame.font.Font('fonts/wawa.ttf', constants.FONT_SIZE_96)
 
     def _set_window(self):
         """设置游戏窗口"""
@@ -86,6 +92,8 @@ class PlaneWar:
         pygame.time.set_timer(constants.ID_OF_CREATE_MID_ENEMY, constants.INTERVAL_OF_CREATE_MID_ENEMY)
         # 在事件队列中每隔一段时间就生成一个自定义事件'创建大型敌机'
         pygame.time.set_timer(constants.ID_OF_CREATE_BIG_ENEMY, constants.INTERVAL_OF_CREATE_BIG_ENEMY)
+        # 在事件队列中每隔一段时间就生成一个自定义事件‘创建子弹补给’
+        pygame.time.set_timer(constants.ID_OF_CREATE_BULLET_SUPPLY, constants.INTERVAL_OF_CREATE_BULLET_SUPPLY)
 
     def _stop_custom_events_timer(self):
         """停止自定义事件定时器"""
@@ -354,6 +362,9 @@ class PlaneWar:
         # 绘制无敌时间的提示信息
         if self.my_plane.is_invincible:
             self._draw_invincible_prompt_text()
+        # 绘制游戏结束的提示信息
+        if self.is_gameover:
+            self._draw_gameover_prompt_text()
 
     def _draw_invincible_prompt_text(self):
         """绘制无敌时间的提示信息"""
@@ -361,6 +372,19 @@ class PlaneWar:
         prompt_text = "还有{}条命, 无敌时间将在该文本消失后解除".format(self.my_plane.life_number)
         # 获取surface对象
         prompt_text_surface = self.font_36.render(prompt_text, True, constants.WHITE_COLOR)
+        # 获取矩形
+        prompt_text_rect = prompt_text_surface.get_rect()
+        # 定位在中部
+        prompt_text_rect.center = self.window.get_rect().center
+        # 绘制对象
+        self.window.blit(prompt_text_surface, prompt_text_rect)
+
+    def _draw_gameover_prompt_text(self):
+        """绘制游戏结束的提示信息"""
+
+        prompt_text = "游戏结束"
+        # 获取surface对象
+        prompt_text_surface = self.font_96.render(prompt_text, True, constants.WHITE_COLOR)
         # 获取矩形
         prompt_text_rect = prompt_text_surface.get_rect()
         # 定位在中部
