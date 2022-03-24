@@ -1,39 +1,38 @@
-"""我方子弹"""
+"""子弹"""
+
 import pygame
 from pygame.sprite import Sprite
 
 
 class Bullet(Sprite):
-    """我方子弹类"""
+    """子弹类"""
 
     def __init__(self, window, my_plane):
-        """初始化我方子弹"""
+        """初始化子弹"""
 
-        # 调用父类Sprite的特殊方法__init__
+        # 调用父类Sprite的特殊方法__init__()
         super().__init__()
-        # 获取窗口对象
+
+        # 获得窗口对象
         self.window = window
-        # 加载我方子弹图片并赋值给变量
-        self.image = pygame.image.load('images/bullet.png')
-        # 获取我方子弹的矩形
+
+        # 加载子弹图片
+        self.image = pygame.image.load("images/bullet.png")
+
+        # 获得子弹的矩形
         self.rect = self.image.get_rect()
-        # 获取飞机的矩形
+
+        # 获得我方飞机的矩形
         self.my_plane_rect = my_plane.rect
-        # 设置我方子弹的矩形位置，位于飞机矩形的顶部中心位置
+
+        # 设置子弹的矩形的初始位置为：我方飞机的矩形的顶部居中位置
         self.rect.midtop = self.my_plane_rect.midtop
-        # 初始化子弹移动的参数
-        self.offset = 40
+
+        # 子弹每次移动时的偏移量
+        self.offset = 50
 
     def update(self):
-        """更新我方子弹位置"""
-        # 对我方子弹矩形的top坐标进行更改,并且向上不会超出窗口范围
+        """更新子弹的位置"""
+
+        # 减少子弹的矩形的属性top以向上移动
         self.rect.top -= self.offset
-
-    def draw(self):
-        """绘制我方子弹"""
-        # 在窗口的指定位置绘制子弹
-        self.window.blit(self.image, self.rect)
-
-
-
-
